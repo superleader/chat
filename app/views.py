@@ -135,8 +135,8 @@ def register():
     form = LoginForm()
     if form.validate_on_submit():
         if User.query.filter_by(username=form.username.data).count():
-            flash("Username '%s' is busy. Please choose another.")
-            return render_template("login.html", form=form)
+            flash("Username '%s' is busy. Please choose another." % form.username.data)
+            return render_template("register.html", form=form)
         user = User(form.username.data, form.password.data)
         db.session.add(user)
         db.session.commit()
