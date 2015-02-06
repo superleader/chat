@@ -1,0 +1,87 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block js %}
+	{% if user_in_chat %}
+		<script src="http://malsup.github.com/jquery.form.js"></script>
+		<script>
+			$(function(){
+				var wait = false
+				function load_post(){
+					if(!wait){
+						wait = true
+						$('#post_box').load('{{ url_for('channel_posts', channel=channel.id) }}', function(){
+							wait = false
+						})
+					}
+				}
+				
+				function add_news(){
+					$.get('{{ url_for('check_ycombinator_posts', channel=channel.id) }}') 
+				}
+				$('#body').focus()
+						
+				setInterval(add_news, 10000)
+				setInterval(load_post, 500)
+				$('#post_form').submit(function(){
+					$(this).ajaxSubmit(function(o){
+						$('#body').val('')
+						load_post()						
+					})
+					return false
+				})
+				
+				$('#search_form').submit(function(){
+					var messages = $('#post_box span.body'),
+						word = $('#word').val(),
+						html = ''
+					for (var i = 0; i <  messages.length; i++){
+						if($(messages[i]).html().indexOf(word) != -1)
+							html += '<div>' + 
+								$(messages[i]).parent().html().replace(word, '<b>'+ word + 	'</b>') + '</div>'
+					}
+					$('#search_results').html("Search for '" + word + "'" + html)
+					return false
+				})		
+			})
+		</script>
+	{% endif %} 
+{% endblock %}
+    
+{% block content %}
+<h1>{{ title }}</h1>
+
+<br />
+{% if user_in_chat %}
+	<div><a href="{{ url_for('remove_user', channel_id=channel.id) }}">Go from chat</a></div>
+	<div style="height:500px; overflow:scroll">
+		<div id="post_box"></div>	
+		<form id="post_form" method="post" action="{{ url_for('add_post', channel=channel.id) }}" >
+			{{ form.hidden_tag() }}
+			{% for field in form if field.widget.input_type != 'hidden' %}
+			    <p>Write message: {{ field }}
+			      	{% if field.errors %}
+			    		<ul class=errors>
+			    			{% for error in field.errors %}
+			      				<li>{{ error }}</li>
+			   				 {% endfor %}
+			   		</ul>
+			  		{% endif %}
+			    </p>
+			{% endfor %}
+			<input value="Post" type="submit" />
+		</form>		
+	</div>
+
+	<form id="search_form">
+		<div>Search in chat:	
+			<input id="word" />
+			<input id="btn_search" value="Search" type="submit" />			
+		</div>
+	</form>
+	<div id="search_results" ></div>
+{% else %}
+	<a href="{{ url_for('add_user', channel_id=channel.id) }}">Join to chat '{{ channel.name }}'</a>
+{% endif %}
+
+{% endblock %}

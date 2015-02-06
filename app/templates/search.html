@@ -1,0 +1,33 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+   
+{% block content %}
+<h1>{{ title }}</h1>
+<div><a href="{{ url_for('add_channel') }}">Create channel</a></div>
+<br />
+<form  method="post">
+{{ form.hidden_tag() }}
+{% for field in form if field.widget.input_type != 'hidden' %}
+    {{ field }}
+   	{% if field.errors %}
+ 		<ul class=errors>
+ 			{% for error in field.errors %}
+   				<li>{{ error }}</li>
+				 {% endfor %}
+			 </ul>
+	{% endif %}
+    
+{% endfor %}
+
+<input value="Search" type="submit" />
+</form>
+
+<div>{% if form.name.data %}Results for '{{ form.name.data }}'{% endif %}</div>
+{% if channels %}
+	<ul>
+	{% for channel in channels %}
+		<li><a href="{{ url_for('channel_view', id=channel.id) }}">{{ channel.name }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+{% endblock %}

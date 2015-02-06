@@ -1,0 +1,7 @@
+<ul>
+	{% for post in posts %}
+		<li>{% if post.timestamp %}{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S')  }}{% endif %}
+		 {{ post.author.nickname }}
+		 <span class="body">{{ post.body|safe }}</span></li>
+	{% endfor %}
+</ul>

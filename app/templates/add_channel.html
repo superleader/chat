@@ -1,0 +1,29 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block js %}
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+{% endblock %}
+    
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form  method="post">
+{{ form.hidden_tag() }}
+{% for field in form if field.widget.input_type != 'hidden' %}
+    <p>{{ field.label }} {{ field }}
+      	{% if field.errors %}
+    		<ul class=errors>
+    			{% for error in field.errors %}
+      				<li>{{ error }}</li>
+   				 {% endfor %}
+   			 </ul>
+  		{% endif %}
+    </p>
+{% endfor %}
+<input value="Save" type="submit" />
+</form>
+
+
+
+{% endblock %}

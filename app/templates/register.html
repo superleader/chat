@@ -1,0 +1,27 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Sign Out</h1>
+
+<form  method="post" >
+	{{ form.hidden_tag() }}
+	{% for field in form if field.widget.input_type != 'hidden' %}
+	    <p>
+	      {{ field.label }} {{ field }}
+	   	{% if field.errors %}
+	 		<ul class=errors>
+	 			{% for error in field.errors %}
+	   				<li>{{ error }}</li>
+					 {% endfor %}
+				 </ul>
+		   {% endif %}
+	    </p>
+	{% endfor %}
+
+<input value="Sign Out" type="submit" />
+</form>
+<p><a href="{{ url_for('login') }}">Sign In</a></p>
+
+{% endblock %}
